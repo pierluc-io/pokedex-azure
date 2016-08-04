@@ -27,8 +27,8 @@ Run `npm install` in the root directory.
 ```
 {
   results: [{
-    name: 'pokemon',
-    url: 'https://pokeapi.co/api/v2/pokemon/'
+    "name": "pokemon",
+    "url": "https://pokeapi.co/api/v2/pokemon/"
   }, ...]
 }
 ```
