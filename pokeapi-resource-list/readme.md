@@ -29,7 +29,7 @@ Run `npm install` in the root directory.
 ```
 {
   "count": 811,
-  results: [{
+  "results": [{
     "url": "https://pokeapi.co/api/v2/pokemon/1/",
     "name": "bulbasaur"
   }, ...]

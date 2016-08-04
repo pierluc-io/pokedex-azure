@@ -2,6 +2,7 @@
   "name": "pokeapi-resource-list",
   "version": "1.0.0",
   "dependencies": {
+    "async": "~2.0.0",
     "request": "^2.74.0"
   }
 }
