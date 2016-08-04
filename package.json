@@ -1,0 +1,30 @@
+{
+  "name": "pokedex-azure",
+  "version": "1.0.0",
+  "description": "A collection of Azure Functions used in pokedex.stream (and also the contact form for my personal website)",
+  "devDependencies": {
+    "ava": "^0.15.0",
+    "standard": "^7.1.0"
+  },
+  "scripts": {
+    "install": "npm run install-contact-me && npm run install-pokemon-data",
+    "install-contact-me": "cd contact-me && npm install",
+    "install-pokemon-data": "cd pokemon-data && npm install",
+    "lint": "standard --fix **/*.js",
+    "test": "ava **/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zertz/pokedex-azure.git"
+  },
+  "keywords": [
+    "pokedex",
+    "azure"
+  ],
+  "author": "Pier-Luc Gendreau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zertz/pokedex-azure/issues"
+  },
+  "homepage": "https://github.com/zertz/pokedex-azure#readme"
+}
