@@ -25,7 +25,7 @@ module.exports = function (context, req) {
       }
 
       if (response.statusCode !== 200) {
-        return new Error(http.STATUS_CODES[response.statusCode])
+        return cb(new Error(http.STATUS_CODES[response.statusCode]))
       }
 
       uri = body.next
