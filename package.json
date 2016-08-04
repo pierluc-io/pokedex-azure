@@ -12,7 +12,7 @@
     "install-contact-me": "cd contact-me && npm install",
     "install-pokemon-data": "cd pokemon-data && npm install",
     "lint": "standard --fix **/*.js",
-    "test": "ava **/test.js"
+    "test": "ava --verbose **/test.js"
   },
   "repository": {
     "type": "git",
