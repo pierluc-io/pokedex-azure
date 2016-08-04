@@ -29,8 +29,9 @@ module.exports = function (context, req) {
       }
 
       uri = body.next
+      results = results.concat(body.results)
 
-      cb(null, results.concat(body.results))
+      cb(null, results)
     })
   }, (err, results) => {
     if (err) {
