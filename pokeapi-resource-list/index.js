@@ -8,7 +8,7 @@ module.exports = function (context, req) {
   const json = true
 
   let uri = `https://pokeapi.co/api/v2/${resource}/`
-  let results
+  let results = []
 
   if (!resource) {
     context.res = {
