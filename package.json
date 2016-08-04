@@ -8,8 +8,9 @@
     "standard": "^7.1.0"
   },
   "scripts": {
-    "install": "npm run install-contact-me && npm run install-pokemon-data",
+    "install": "npm run install-contact-me && npm run install-pokeapi-endpoints && npm run install-pokemon-data",
     "install-contact-me": "cd contact-me && npm install",
+    "install-pokeapi-endpoints": "cd pokeapi-endpoints && npm install",
     "install-pokemon-data": "cd pokemon-data && npm install",
     "lint": "standard --fix **/*.js",
     "test": "ava --verbose **/test.js"
