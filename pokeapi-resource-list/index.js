@@ -1,5 +1,6 @@
 'use strict'
 
+const http = require('http')
 const request = require('request')
 const whilst = require('async/whilst')
 
@@ -21,6 +22,10 @@ module.exports = function (context, req) {
     request({ uri, json }, (err, response, body) => {
       if (err) {
         return cb(err)
+      }
+
+      if (response.statusCode !== 200) {
+        return new Error(http.STATUS_CODES[response.statusCode])
       }
 
       uri = body.next
