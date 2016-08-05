@@ -10,6 +10,13 @@
       "type": "http",
       "direction": "out",
       "name": "res"
+    },
+    {
+      "type": "blob",
+      "direction": "out",
+      "name": "outputBlob",
+      "connection": "AzureWebJobsStorage",
+      "path": "resource-list.json"
     }
   ],
   "disabled": false
