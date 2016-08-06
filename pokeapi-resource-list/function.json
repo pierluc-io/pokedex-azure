@@ -14,7 +14,7 @@
     {
       "type": "blob",
       "direction": "out",
-      "name": "outputBlob",
+      "name": "blob",
       "connection": "AzureWebJobsStorage",
       "path": "pokeapi/resource-list.json"
     }
