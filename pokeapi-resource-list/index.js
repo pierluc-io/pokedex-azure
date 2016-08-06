@@ -42,7 +42,7 @@ module.exports = function (context, req) {
     } else {
       const count = results.length
 
-      context.res = { count, results }
+      context.res = context.outputBlob = { count, results }
     }
 
     context.done()
