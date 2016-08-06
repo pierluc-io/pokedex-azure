@@ -16,7 +16,7 @@
       "direction": "out",
       "name": "outputBlob",
       "connection": "AzureWebJobsStorage",
-      "path": "resource-list.json"
+      "path": "pokeapi/resource-list.json"
     }
   ],
   "disabled": false
