@@ -14,9 +14,9 @@ Run `npm install` in the root directory.
 
 ### Request
 
-`GET https://<app-service>.azurewebsites.net/api/pokeapi-resource-list?resource=<resource>`
+`GET https://<app-service>.azurewebsites.net/api/pokeapi-resource-list?endpoint=pokemon`
 
-> *resource* : PokéAPI resource to query for
+> *endpoint* : PokéAPI endpoint to query for
 
 #### Headers
 
@@ -29,6 +29,7 @@ Run `npm install` in the root directory.
 ```
 {
   "count": 811,
+  "endpoint": "pokemon",
   "results": [{
     "url": "https://pokeapi.co/api/v2/pokemon/1/",
     "name": "bulbasaur"

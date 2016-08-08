@@ -5,16 +5,16 @@ const request = require('request')
 const whilst = require('async/whilst')
 
 module.exports = function (context, req) {
-  const resource = req.query && req.query.resource ? req.query.resource : null
+  const endpoint = req.query ? req.query.endpoint : null
   const json = true
 
-  let uri = `https://pokeapi.co/api/v2/${resource}/`
+  let uri = `https://pokeapi.co/api/v2/${endpoint}/`
   let results = []
 
-  if (!resource) {
+  if (!endpoint) {
     context.res = {
       status: 400,
-      message: '"resource" must be specified'
+      message: '"endpoint" must be specified'
     }
   }
 
@@ -42,7 +42,7 @@ module.exports = function (context, req) {
     } else {
       const count = results.length
 
-      context.res = context.bindings.blob = { count, results }
+      context.res = context.bindings.blob = { count, endpoint, results }
     }
 
     context.done()
