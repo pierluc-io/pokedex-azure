@@ -1,0 +1,7 @@
+{
+  "name": "pokedex-upsert",
+  "version": "1.0.0",
+  "dependencies": {
+    "documentdb": "~1.9.0"
+  }
+}
