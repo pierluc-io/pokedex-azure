@@ -10,13 +10,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "type": "blob",
-      "direction": "out",
-      "name": "blob",
-      "connection": "AzureWebJobsStorage",
-      "path": "pokeapi/resource-list.json"
     }
   ],
   "disabled": false
