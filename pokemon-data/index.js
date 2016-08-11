@@ -1,7 +1,6 @@
 'use strict'
 
 const request = require('request-promise')
-const serialize = require('serialize-error')
 
 module.exports = function (context, input) {
   context.log(`Manual Trigger - ${input}`)
@@ -61,6 +60,6 @@ module.exports = function (context, input) {
   }).then(() => {
 
   }).catch((err) => {
-    context.log(`An error occured: ${JSON.stringify(serialize(err), null, 2)}`)
+    context.log(`An error occured: ${err.stack}`)
   })
 }
