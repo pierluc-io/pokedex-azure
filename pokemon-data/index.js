@@ -1,150 +1,66 @@
 'use strict'
 
-const DocumentDBClient = require('documentdb').DocumentClient
-const request = require('request')
+const request = require('request-promise')
 const serialize = require('serialize-error')
-
-function findOneByUri (client, collectionLink, resourceUri) {
-  return new Promise((resolve, reject) => {
-    client.queryDocuments(collectionLink, {
-      query: 'SELECT * FROM r WHERE r.resource_uri = @resource_uri',
-      parameters: [{
-        name: '@resource_uri',
-        value: resourceUri
-      }]
-    }).toArray((err, docs) => {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(docs[0])
-    })
-  })
-}
-
-function insertOne (client, collectionLink, data) {
-  return new Promise((resolve, reject) => {
-    client.createDocument(collectionLink, data, (err, document) => {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(document)
-    })
-  })
-}
-
-/* function updateOne (client, document, data) {
-  return new Promise((resolve, reject) => {
-    client.replaceDocument(document._self, Object.assign(document, data), (err, doc) => {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(doc)
-    })
-  })
-}*/
-
-/* function upsertOne (client, collectionLink, data) {
-  return findOneByUri(client, collectionLink, data.resource_uri).then((document) => {
-    return document ? updateOne(client, document, data) : insertOne(client, collectionLink, data)
-  })
-}*/
-
-function getPokeResourceUriList (resource) {
-  return new Promise((resolve, reject) => {
-    (function find (uri, results) {
-      request({ uri,
-                json: true
-            }, (err, response, body) => {
-        if (err) {
-          return reject(err)
-        }
-
-        results = results.concat(body.results.map((r) => r.url))
-
-        if (body.next) {
-          return find(body.next, results)
-        }
-
-        resolve(results)
-      })
-    })(`https://pokeapi.co/api/v2/${resource}/`, [])
-  })
-}
-
-function getPokeResourceFromUri (uri) {
-  return new Promise((resolve, reject) => {
-    request({ uri,
-            json: true
-        }, (err, response, body) => {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(body)
-    })
-  })
-}
 
 module.exports = function (context, myTimer) {
   context.log(`Timer Trigger - ${Date.now()}`)
 
-  function updateData (client, collection, resource) {
-    context.log(`Getting ${resource} list...`)
+  const headers = {
+    'x-functions-key': process.env.AZURE_FUNCTIONS_KEY
+  }
 
-    return getPokeResourceUriList(resource).then((uriList) => {
-      context.log(`Found ${resource} list! Getting ${resource} data...`)
+  const json = true
 
-      return uriList.reduce((promise, uri) => {
-        return promise.then(() => {
-          context.log(`Finding ${resource} by uri ${uri}...`)
+  if (myTimer.isPastDue) {
+    request({
+      uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-endpoints', headers, json
+    }).then((body) => {
+      return Promise.all(body.results.map((endpoint) => request({
+        uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-resource-list', headers, json,
+        qs: {
+          endpoint: endpoint.name
+        }
+      })))
+    }).then((data) => {
+      const resourceList = []
 
-          return findOneByUri(client, collection, uri).then((document) => {
-            if (document) {
-              context.log(`Found ${resource} ${document.name}!`)
+      context.log(`Aggregating resource lists from ${data.length} endpoints...`)
 
-              return Promise.resolve()
-            }
+      data.map((resources) => resources.map((resource) => resource.results.map((result) => {
+        resourceList.push(Object.assign(result, {
+          endpoint: resource.endpoint
+        }))
+      })))
 
-            context.log(`Requesting ${resource} at ${uri}...`)
+      return Promise.resolve(resourceList)
+    }).then((resources) => {
+      context.log(`Aggregated ${resources.length} resource lists!`)
 
-            return getPokeResourceFromUri(uri).then((data) => {
-              context.log(`Inserting ${resource} ${data.name}...`)
+      return resources.reduce((promise, resource, i, resources) => {
+        context.log(`Requesting ${resource.endpoint} ${resource.id || resource.name} (${i + 1} / ${resources.length})`)
 
-              data.isDeleted = false
-              data.resource = resource
-              data.resource_id = data.id
-              data.resource_uri = uri
+        return request({
+          uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-resource', headers, json,
+          qs: {
+            endpoint: resource.endpoint,
+            id: resource.id || resource.name
+          }
+        }).then((body) => {
+          context.log(`Upserting ${resource.endpoint} ${resource.id || resource.name} (${i + 1} / ${resources.length})`)
 
-              delete data.id
-
-              return insertOne(client, collection, data)
-            })
+          return request({
+            uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokedex-upsert', headers, json,
+            method: 'POST',
+            qs: {
+              endpoint: resource.endpoint
+            },
+            data: body
           })
         })
       }, Promise.resolve())
-    })
-  }
+    }).then(() => {
 
-  if (!myTimer.isPastDue) {
-    const client = new DocumentDBClient('https://pierluc-io.documents.azure.com:443/', {
-      masterKey: process.env.DOCUMENTDB_MASTER_KEY
-    })
-
-    const databaseId = 'pokedex'
-    const collectionId = 'resources'
-    const resource = 'type'
-
-    const collectionLink = `dbs/${databaseId}/colls/${collectionId}`
-
-    context.log(`Updating ${resource} data in ${collectionLink}...`)
-
-    updateData(client, collectionLink, resource).then(() => {
-      context.log(`Done updating ${resource} data in ${collectionLink}!`)
-
-      context.done()
     }).catch((err) => {
       context.log(`An error occured: ${JSON.stringify(serialize(err), null, 2)}`)
     })
