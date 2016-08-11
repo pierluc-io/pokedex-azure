@@ -3,17 +3,19 @@
 const request = require('request-promise')
 
 module.exports = function (context, input) {
-  context.log(`Manual Trigger - ${input}`)
-
   const headers = {
     'x-functions-key': process.env.AZURE_FUNCTIONS_KEY
   }
 
   const json = true
 
+  context.log('Requesting list of PokeAPI endpoints...')
+
   request({
     uri: 'https://pierluc-io.azurewebsites.net/api/pokeapi-endpoints', headers, json
   }).then((body) => {
+    context.log(`Requesting resource list for ${body.results.length} endpoints...`)
+
     return Promise.all(body.results.map((endpoint) => request({
       uri: 'https://pierluc-io.azurewebsites.net/api/pokeapi-resource-list', headers, json,
       qs: {
