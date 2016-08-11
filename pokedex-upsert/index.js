@@ -47,7 +47,12 @@ function updateOne (client, document, data) {
 
 function upsertOne (client, collectionLink, data) {
   return findOneByUri(client, collectionLink, data.resource_uri).then((document) => {
-    return document ? updateOne(client, document, data) : insertOne(client, collectionLink, data)
+    if (document) {
+      return Promise.resolve('update')
+    } else {
+      return Promise.resolve('insert')
+    }
+    // return document ? updateOne(client, document, data) : insertOne(client, collectionLink, data)
   })
 }
 
@@ -82,8 +87,8 @@ module.exports = function (context, req) {
 
   delete data.id
 
-  upsertOne(client, collectionLink, data).then(() => {
-    context.log(`Done upserting ${data.resource} ${data.resource_id} data in ${collectionLink}!`)
+  upsertOne(client, collectionLink, data).then((result) => {
+    context.log(`Done upserting ${data.resource} ${data.resource_id} data in ${collectionLink}! (${result})`)
 
     context.done()
   }).catch((err) => {
