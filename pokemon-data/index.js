@@ -12,10 +12,10 @@ module.exports = function (context, input) {
   const json = true
 
   request({
-    uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-endpoints', headers, json
+    uri: 'https://pierluc-io.azurewebsites.net/api/pokeapi-endpoints', headers, json
   }).then((body) => {
     return Promise.all(body.results.map((endpoint) => request({
-      uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-resource-list', headers, json,
+      uri: 'https://pierluc-io.azurewebsites.net/api/pokeapi-resource-list', headers, json,
       qs: {
         endpoint: endpoint.name
       }
@@ -39,7 +39,7 @@ module.exports = function (context, input) {
       context.log(`Requesting ${resource.endpoint} ${resource.id || resource.name} (${i + 1} / ${resources.length})`)
 
       return request({
-        uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokeapi-resource', headers, json,
+        uri: 'https://pierluc-io.azurewebsites.net/api/pokeapi-resource', headers, json,
         qs: {
           endpoint: resource.endpoint,
           id: resource.id || resource.name
@@ -48,7 +48,7 @@ module.exports = function (context, input) {
         context.log(`Upserting ${resource.endpoint} ${resource.id || resource.name} (${i + 1} / ${resources.length})`)
 
         return request({
-          uri: 'https://pierluc-io.scm.azurewebsites.net/api/functions/pokedex-upsert', headers, json,
+          uri: 'https://pierluc-io.azurewebsites.net/api/pokedex-upsert', headers, json,
           method: 'POST',
           qs: {
             endpoint: resource.endpoint
