@@ -23,19 +23,17 @@ module.exports = function (context, input) {
       }
     })))
   }).then((data) => {
-    const resourceList = []
+    const resources = []
 
-    context.log(`Aggregating resource lists from ${data.length} endpoints...`)
+    context.log(`Aggregating resources from ${data.length} lists...`)
 
-    data.map((resources) => resources.map((resource) => resource.results.map((result) => {
-      resourceList.push(Object.assign(result, {
-        endpoint: resource.endpoint
-      }))
-    })))
+    data.forEach((resource) => resource.results.forEach((result) => resources.push(Object.assign(result, {
+      endpoint: resource.endpoint
+    }))))
 
-    return Promise.resolve(resourceList)
+    return Promise.resolve(resources)
   }).then((resources) => {
-    context.log(`Aggregated ${resources.length} resource lists!`)
+    context.log(`Aggregated ${resources.length} resources!`)
 
     return resources.reduce((promise, resource, i, resources) => {
       context.log(`Requesting ${resource.endpoint} ${resource.id || resource.name} (${i + 1} / ${resources.length})`)
@@ -60,7 +58,9 @@ module.exports = function (context, input) {
       })
     }, Promise.resolve())
   }).then(() => {
+    context.log('Done!')
 
+    context.done()
   }).catch((err) => {
     context.log(`An error occured: ${err.stack}`)
   })
