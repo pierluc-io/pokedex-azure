@@ -47,12 +47,7 @@ function updateOne (client, document, data) {
 
 function upsertOne (client, collectionLink, data) {
   return findOneByUri(client, collectionLink, data.resource_uri).then((document) => {
-    if (document) {
-      return Promise.resolve('update')
-    } else {
-      return Promise.resolve('insert')
-    }
-    // return document ? updateOne(client, document, data) : insertOne(client, collectionLink, data)
+    return document ? updateOne(client, document, data) : insertOne(client, collectionLink, data)
   })
 }
 
