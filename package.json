@@ -5,7 +5,7 @@
   "devDependencies": {
     "ava": "^0.16.0",
     "sinon": "^1.17.0",
-    "standard": "^7.1.0"
+    "standard": "^8.0.0"
   },
   "scripts": {
     "install": "npm run install-contact-me && npm run install-pokeapi-endpoints && npm run install-pokeapi-resource-list && npm run install-pokemon-data",
