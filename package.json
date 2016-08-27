@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A collection of Azure Functions used in pokedex.stream (and also the contact form for my personal website)",
   "devDependencies": {
-    "ava": "^0.15.0",
+    "ava": "^0.16.0",
     "sinon": "^1.17.0",
     "standard": "^7.1.0"
   },
